@@ -1,1 +1,56 @@
 
+ORG 000H
+ MOV P0,#0FFH
+SETB P1.1
+CLR P1.4
+SETB P1.4
+STAY: JB P1.1,STAY
+CLR P1.5
+MOV A,P0
+ACALL TO_TEMP
+ACALL TO_DISPLAY
+SETB P1.5
+SJMP BACK
+TO_TEMP: MOV DPTR,#500H
+       MOVC A,@A+DPTR
+        MOV R1,A
+        RET
+TO_DISPLAY: MOV A,#38H
+            ACALL COMMON
+          ACALL DELAY
+          MOV A,#0EH
+        ACALL COMMON
+     ACALL DELAY
+       MOV A,#01H
+      ACALL COMMON
+       ACALL DELAY
+       MOV A,#80H
+      ACALL COMMON
+      ACALL DELAY
+      MOV A,R1
+       ACALL DATA
+        ACALL DELAY
+        RET
+  COMMON: CLR P1.2
+      MOV P2,A
+    SETB P1.3
+      ACALL DELAY
+        CLR P1.3
+       RET
+DATA: SETB P1.2
+     MOV P2,A
+        SETB P1.3
+         ACALL DELAY
+        CLR P1.3
+       RET
+DELAY: MOV R3,#FFH
+       BACK: MOV R4,#FFH
+      HERE: DJNE R4,HERE
+         DJNE R3,BACK
+
+ORG 500H
+ ASCII_TABLE:
+DB '0','1','2','3','4',.....
+
+
+END 
